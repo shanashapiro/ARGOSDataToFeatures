@@ -9,3 +9,7 @@
 ## Created: Fall 2021
 ## Author: shana.shapiro@duke.edu (For ENV859) 
 ##---------------------------------------------------------------------
+
+#Import modules
+import sys, os, arcpy
+
