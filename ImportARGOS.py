@@ -7,27 +7,34 @@
 ## Usage: ImportArgos <ARGOS folder> <Output feature class> 
 ##
 ## Created: Fall 2021
-## Author: shana.shapiro@duke.edu (For ENV859) 
+## Author: John.Fay@duke.edu (for ENV859)
 ##---------------------------------------------------------------------
 
-#Import modules
+# Import modules
 import sys, os, arcpy
 
+# Allow outputs to be overwritten
+arcpy.env.overwriteOutput = True 
+
 # Set input variables (Hard-wired)
-inputFile = 'V:/ARGOSTracking/data/ARGOSData/1997dg.txt' #Note can also do \\ instead of /
-outputFC = "V:/ARGOSTracking/scratch/ARGOStrack.shp"
+inputFile = 'V:/ARGOSTracking/Data/ARGOSData/1997dg.txt'
+outputFC = "V:/ARGOSTracking/Scratch/ARGOStrack.shp"
 
-#%% construct a while loop to iterate through all lines in the datafile
-# Open the ARGOS data file for reading 
-inputFileObj = open(inputFile, 'r')
+# Create feature class to which we will add features 
+outPath, outFile = os.path.split(outputFC)
+arcpy.management.CreateFeatureclass(outPath, outFile)
 
-#want the script to be able to read large files. Do this with a while loop 
-#Get the first line of data so we can use the while loop
+#%% Construct a while loop and iterate through all lines in the data file
+# Open the ARGOS data file
+inputFileObj = open(inputFile,'r')
+
+# Get the first line of data, so we can use the while loop
 lineString = inputFileObj.readline()
 
-#Start the while loop 
-while lineString: 
-     # Set code to run only if the line contains the string "Date: "
+#Start the while loop
+while lineString:
+    
+    # Set code to run only if the line contains the string "Date: "
     if ("Date :" in lineString):
         
         # Parse the line into a list
@@ -45,13 +52,17 @@ while lineString:
         # Extract the date we need to variables
         obsLat = line2Data[2]
         obsLon= line2Data[5]
+                    
+        # Extract the date, time, and LC values
+        obsDate = lineData[3]
+        obsTime = lineData[4]
+        obsLC   = lineData[7]
         
         # Print results to see how we're doing
-        print (tagID,"Lat:"+obsLat,"Long:"+obsLon)
+        print (tagID,"Lat:"+obsLat,"Long:"+obsLon, obsLC, obsDate, obsTime)
         
-    # Move to the next line so the while loop progresses. This is evaluated for every line
+    # Move to the next line so the while loop progresses
     lineString = inputFileObj.readline()
     
 #Close the file object
 inputFileObj.close()
-
